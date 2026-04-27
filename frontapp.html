@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraceBot | Advanced Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-primary: #2563eb;
+            --brand-dark: #0f172a;
+            --surface-50: #f8fafc;
+            --surface-100: #f1f5f9;
+            --surface-200: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        * { box-sizing: border-box; outline: none; transition: all 0.2s ease-in-out; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f1f5f9;
+            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                              radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                              radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 1100px;
+            height: 90vh;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+        }
+
+        header {
+            padding: 18px 32px;
+            background: rgba(255, 255, 255, 0.5);
+            border-bottom: 1px solid var(--surface-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .brand { display: flex; align-items: center; gap: 14px; }
+        .logo-container {
+            width: 36px;
+            height: 36px;
+            background: var(--brand-dark);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; color: var(--brand-dark); }
+        .badge { font-size: 10px; background: var(--brand-primary); color: white; padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle; text-transform: uppercase; }
+
+        .chat-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 40px 10%;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Hero / Welcome */
+        .hero {
+            text-align: center;
+            max-width: 500px;
+            margin: auto;
+            border-radius: 30px;
+            background-color: rgb(227, 238, 252);
+            animation: fadeIn 0.6s ease-out;
+        }
+        .hero h2 { font-size: 32px; font-weight: 800; color: var(--brand-dark); margin-bottom: 12px; }
+        .hero p { font-size: 16px; color: var(--text-muted); line-height: 1.6; }
+
+        /* Messaging */
+        .msg-group { display: flex; flex-direction: column; width: 100%; }
+        .msg-group.user { align-items: flex-end; }
+        .msg-group.bot { align-items: flex-start; }
+
+        .bubble {
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.6;
+            max-width: 80%;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user .bubble {
+            background: var(--brand-dark);
+            color: var(--white);
+            border-bottom-right-radius: 2px;
+        }
+
+        .bot .bubble {
+            background: var(--white);
+            color: var(--text-main);
+            border: 1px solid var(--surface-200);
+            border-bottom-left-radius: 2px;
+        }
+
+        /* Input Deck */
+        .input-deck {
+            padding: 24px 32px 32px;
+            background: transparent;
+        }
+
+        .composer {
+            background: var(--white);
+            border: 1px solid var(--surface-200);
+            border-radius: 16px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .composer:focus-within {
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        .composer input {
+            flex-grow: 1;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            color: var(--text-main);
+            background: transparent;
+        }
+
+        .action-btn {
+            background: var(--brand-dark);
+            color: white;
+            border: none;
+            height: 44px;
+            width: 44px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover { background: var(--brand-primary); transform: translateY(-1px); }
+        .action-btn:disabled { background: var(--surface-200); cursor: not-allowed; }
+
+        /* Indicators */
+        .typing { display: flex; gap: 4px; padding: 10px 0; }
+        .dot { width: 5px; height: 5px; background: var(--brand-primary); border-radius: 50%; animation: pulse 1.5s infinite; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .chat-container::-webkit-scrollbar { width: 5px; }
+        .chat-container::-webkit-scrollbar-thumb { background: var(--surface-200); border-radius: 10px; }
+
+        @media (max-width: 768px) {
+            .app-shell { height: 100vh; border-radius: 0; border: none; }
+            .chat-container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header>
+        <div class="brand">
+            <div class="logo-container">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z" fill="white"/>
+                </svg>
+            </div>
+            <h1>GraceBot<span class="badge">Enterprise</span></h1>
+        </div>
+        <div class="controls">
+            <button id="reset-trigger" style="background:none; border:none; color:var(--text-muted); cursor:pointer;"><i class="fas fa-rotate-right"></i></button>
+        </div>
+    </header>
+
+    <main class="chat-container" id="chat-viewport">
+        <div class="hero" id="hero-section">
+            <h2>Modern Intelligence.</h2>
+            <p>Welcome to GraceBot. I'm equipped with document RAG capabilities and advanced conversational memory to assist your workflow.</p>
+            <div id="user-info-container" style="margin-top: 2rem; background: var(--surface-100); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--surface-200); max-width: 400px; margin-left: auto; margin-right: auto;">
+                <h3 style="margin-top: 0; font-size: 1rem; color: var(--text-main);">Personalize your experience</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <input type="text" id="user-name" placeholder="Full Name" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--surface-200); background: var(--white);">
+                <input type="text" id="user-contact" placeholder="Email or Contact Number" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--surface-200); background: var(--white);">
+                <button type="button" id="info-done-btn" onclick="sendUserInfo()" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: var(--brand-primary); color: white; border: none; cursor: pointer; font-weight: 600;">Done</button>
+             </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="input-deck">
+        <div class="composer">
+            <input type="text" id="user-input" placeholder="Type your inquiry..." autocomplete="off">
+            <button type="button" class="action-btn" id="send-trigger">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+        </div>
+    </footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

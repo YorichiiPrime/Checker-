@@ -1,0 +1,21 @@
+# Web & API
+quart
+quart_cors
+groq
+
+# Document Extraction
+pdfplumber
+python-docx
+wordsegment
+
+# Machine Learning & Classification
+joblib
+scikit-learn
+
+# Vector Database & Embeddings
+chromadb
+sentence-transformers==5.1.2
+
+# Session & Database (for redis_backend.py)
+redis[hiredis]
+motor
